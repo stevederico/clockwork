@@ -32,17 +32,15 @@ Download the latest release from the [Releases](../../releases) page.
 
 #### Opening the App
 
-This app is not signed with an Apple Developer certificate. When you first open it, macOS will show a warning. To open it:
+This app is not signed with an Apple Developer certificate. macOS will block it the first time you open it. Follow these steps:
 
-1. **Right-click** (or Control-click) on `clockwork.app`
-2. Select **Open** from the menu
-3. Click **Open** in the dialog that appears
-
-Alternatively, you can allow it in System Settings:
-
-1. Go to **System Settings → Privacy & Security**
-2. Scroll down to find the blocked app message
-3. Click **Open Anyway**
+1. Double-click `clockwork.app` — macOS will show a warning and refuse to open it
+2. Open **System Settings**
+3. Go to **Privacy & Security**
+4. Scroll down to the bottom — you'll see a message about "clockwork" being blocked
+5. Click **Open Anyway**
+6. Click **Open Anyway** again in the confirmation dialog
+7. Enter your password when prompted
 
 ### Build from Source
 
