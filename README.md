@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="screenshot.png" width="320" alt="Clockwork screenshot">
+  <img src="screenshot.png?raw=true" width="320" alt="Clockwork screenshot">
 </p>
 
 # Clockwork
