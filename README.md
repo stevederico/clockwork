@@ -30,6 +30,20 @@ A minimal, elegant menubar time tracker for macOS. Track billable hours and earn
 
 Download the latest release from the [Releases](../../releases) page.
 
+#### Opening the App
+
+This app is not signed with an Apple Developer certificate. When you first open it, macOS will show a warning. To open it:
+
+1. **Right-click** (or Control-click) on `clockwork.app`
+2. Select **Open** from the menu
+3. Click **Open** in the dialog that appears
+
+Alternatively, you can allow it in System Settings:
+
+1. Go to **System Settings → Privacy & Security**
+2. Scroll down to find the blocked app message
+3. Click **Open Anyway**
+
 ### Build from Source
 
 ```bash
