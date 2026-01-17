@@ -9,9 +9,19 @@ import SwiftUI
 
 @main
 struct clockworkApp: App {
+    @StateObject private var timerManager = TimerManager()
+
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+        MenuBarExtra {
+            MenuBarView()
+                .environmentObject(timerManager)
+        } label: {
+            Image(nsImage: {
+                let config = NSImage.SymbolConfiguration(pointSize: 16, weight: .bold)
+                let image = NSImage(systemSymbolName: timerManager.currentSession != nil ? "dollarsign.circle.fill" : "clock", accessibilityDescription: nil)!
+                return image.withSymbolConfiguration(config)!
+            }())
         }
+        .menuBarExtraStyle(.window)
     }
 }
