@@ -247,6 +247,9 @@ struct MenuBarView: View {
                     if let rate = Double(rateInput) {
                         timerManager.updateHourlyRate(rate)
                     }
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showSettings = false
+                    }
                 }) {
                     Text("Update")
                         .font(.system(size: 12, weight: .semibold))
