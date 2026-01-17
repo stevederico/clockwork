@@ -6,6 +6,10 @@ A minimal, elegant menubar time tracker for macOS. Track billable hours and earn
 ![Swift](https://img.shields.io/badge/Swift-5.0-orange?style=flat-square&logo=swift)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
 
+<p align="center">
+  <img src="screenshot.png" width="320" alt="Clockwork screenshot">
+</p>
+
 ## Features
 
 - **Menubar Native** — Lives in your menubar, always one click away
