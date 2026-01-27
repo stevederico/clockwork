@@ -2,6 +2,16 @@
 
 All notable changes to Clockwork will be documented in this file.
 
+1.2.0
+
+  Show pause icon
+  Add start/stop times
+  Add swipe delete
+  Add clear sessions
+  Prevent multiple instances
+  Fix popover behavior
+  Remove icon generator
+
 ## [1.1.1] - 2026-01-16
 
 ### Fixed

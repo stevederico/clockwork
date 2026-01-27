@@ -40,8 +40,10 @@ struct MenuBarView: View {
 
             sessionsSection
         }
-        .frame(width: 320)
+        .frame(width: 320, height: 520)
         .background(ClockworkColors.background)
+        .ignoresSafeArea(.container, edges: [.top, .bottom])
+        .padding(.top, -4)
     }
 
     // MARK: - Header
@@ -209,11 +211,12 @@ struct MenuBarView: View {
     // MARK: - Settings
 
     private var settingsSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("HOURLY RATE")
-                .font(.system(size: 10, weight: .semibold))
-                .tracking(1.5)
-                .foregroundColor(ClockworkColors.textTertiary)
+        VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("HOURLY RATE")
+                    .font(.system(size: 10, weight: .semibold))
+                    .tracking(1.5)
+                    .foregroundColor(ClockworkColors.textTertiary)
 
             HStack(spacing: 8) {
                 HStack(spacing: 4) {
@@ -263,6 +266,33 @@ struct MenuBarView: View {
                 }
                 .buttonStyle(.plain)
             }
+            }
+
+            if !timerManager.sessions.isEmpty {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("DANGER ZONE")
+                        .font(.system(size: 10, weight: .semibold))
+                        .tracking(1.5)
+                        .foregroundColor(ClockworkColors.textTertiary)
+
+                    Button(action: { timerManager.clearAllSessions() }) {
+                        HStack {
+                            Image(systemName: "trash")
+                                .font(.system(size: 12, weight: .medium))
+                            Text("Clear All Sessions")
+                                .font(.system(size: 12, weight: .semibold))
+                        }
+                        .foregroundColor(ClockworkColors.danger)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(ClockworkColors.danger.opacity(0.5), lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
         }
         .padding(16)
         .background(ClockworkColors.cardBackground)
@@ -279,15 +309,6 @@ struct MenuBarView: View {
                     .foregroundColor(ClockworkColors.textTertiary)
 
                 Spacer()
-
-                if !timerManager.sessions.isEmpty {
-                    Button(action: { timerManager.clearAllSessions() }) {
-                        Image(systemName: "trash")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(ClockworkColors.danger.opacity(0.8))
-                    }
-                    .buttonStyle(.plain)
-                }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -306,8 +327,7 @@ struct MenuBarView: View {
                         .font(.system(size: 12, weight: .regular))
                         .foregroundColor(ClockworkColors.textTertiary)
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 24)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 ScrollView {
                     LazyVStack(spacing: 0) {
@@ -325,11 +345,11 @@ struct MenuBarView: View {
                         }
                     }
                 }
-                .frame(maxHeight: 180)
+                .frame(maxHeight: .infinity)
             }
         }
+        .frame(maxHeight: .infinity)
     }
-
 }
 
 // MARK: - Session Row
@@ -337,50 +357,103 @@ struct MenuBarView: View {
 struct SessionRow: View {
     let session: Session
     let onDelete: () -> Void
-    @State private var isHovering: Bool = false
+    @State private var dragOffset: CGFloat = 0
+    @State private var isRevealed: Bool = false
+    @State private var showDeleteConfirm: Bool = false
+    private let revealWidth: CGFloat = 64
 
     var body: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(session.formattedDate)
-                    .font(.system(size: 13, weight: .regular))
-                    .foregroundColor(ClockworkColors.textSecondary)
-
-                Text(session.formattedDuration)
-                    .font(.system(size: 13, weight: .medium, design: .monospaced))
-                    .foregroundColor(ClockworkColors.textPrimary)
-            }
-
-            Spacer()
-
-            Text(session.formattedEarnings)
-                .font(.system(size: 15, weight: .medium, design: .rounded))
-                .foregroundColor(ClockworkColors.gold)
-
-            if isHovering {
-                Button(action: onDelete) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(ClockworkColors.textTertiary)
-                        .padding(4)
-                        .background(
-                            Circle()
-                                .fill(ClockworkColors.divider)
-                        )
+        ZStack(alignment: .trailing) {
+            HStack {
+                Spacer()
+                Button(action: { showDeleteConfirm = true }) {
+                    Image(systemName: "trash")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(ClockworkColors.textPrimary)
+                        .frame(width: revealWidth, height: 44)
+                        .background(ClockworkColors.danger)
                 }
                 .buttonStyle(.plain)
-                .transition(.opacity.combined(with: .scale))
             }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(isHovering ? ClockworkColors.cardBackground.opacity(0.5) : Color.clear)
-        .contentShape(Rectangle())
-        .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.15)) {
-                isHovering = hovering
+            .frame(maxWidth: .infinity)
+            .background(ClockworkColors.cardBackground)
+
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(timeRangeText)
+                        .font(.system(size: 12, weight: .regular, design: .monospaced))
+                        .foregroundColor(ClockworkColors.textSecondary)
+
+                    Text(session.formattedDuration)
+                        .font(.system(size: 12, weight: .medium, design: .monospaced))
+                        .foregroundColor(ClockworkColors.textPrimary)
+                }
+
+                Spacer()
+
+                Text(session.formattedEarnings)
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .foregroundColor(ClockworkColors.gold)
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(ClockworkColors.background)
+            .offset(x: dragOffset)
+            .gesture(
+                DragGesture(minimumDistance: 10)
+                    .onChanged { value in
+                        let base = isRevealed ? -revealWidth : 0
+                        let proposed = base + value.translation.width
+                        dragOffset = min(0, max(proposed, -revealWidth))
+                    }
+                    .onEnded { _ in
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            if -dragOffset > revealWidth * 0.5 {
+                                isRevealed = true
+                                dragOffset = -revealWidth
+                            } else {
+                                isRevealed = false
+                                dragOffset = 0
+                            }
+                        }
+                    }
+            )
+            .simultaneousGesture(
+                TapGesture()
+                    .onEnded {
+                        if isRevealed {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                isRevealed = false
+                                dragOffset = 0
+                            }
+                        }
+                    }
+            )
         }
+        .alert("Delete session?", isPresented: $showDeleteConfirm) {
+            Button("Delete", role: .destructive) {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isRevealed = false
+                    dragOffset = 0
+                }
+                onDelete()
+            }
+            Button("Cancel", role: .cancel) {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isRevealed = false
+                    dragOffset = 0
+                }
+            }
+        } message: {
+            Text("This cannot be undone.")
+        }
+    }
+
+    private var timeRangeText: String {
+        if let end = session.formattedEndTime {
+            return "\(session.formattedStartTime) – \(end)"
+        }
+        return session.formattedStartTime
     }
 }
 

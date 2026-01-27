@@ -30,20 +30,25 @@ struct Session: Identifiable, Codable {
     }
 
     var formattedDuration: String {
-        let hours = Int(duration) / 3600
-        let minutes = (Int(duration) % 3600) / 60
-        let seconds = Int(duration) % 60
-        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+        let hours = duration / 3600.0
+        return String(format: "%.2f hrs", hours)
     }
 
     var formattedEarnings: String {
         return String(format: "$%.2f", earnings)
     }
 
-    var formattedDate: String {
+    var formattedStartTime: String {
         let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .short
+        formatter.dateFormat = "M/d, h:mm a"
         return formatter.string(from: startTime)
+    }
+
+    var formattedEndTime: String? {
+        guard let end = endTime else { return nil }
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        return formatter.string(from: end)
     }
 }
