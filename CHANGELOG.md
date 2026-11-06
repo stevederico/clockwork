@@ -2,6 +2,11 @@
 
 All notable changes to Clockwork will be documented in this file.
 
+1.3.0
+
+  Move signing to xcconfig
+  Add Local.xcconfig example
+
 1.2.0
 
   Show pause icon
