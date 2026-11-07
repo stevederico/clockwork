@@ -2,6 +2,10 @@
 
 All notable changes to Clockwork will be documented in this file.
 
+1.4.0
+
+  Add MIT license
+
 1.3.0
 
   Move signing to xcconfig
